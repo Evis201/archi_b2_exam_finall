@@ -45,7 +45,10 @@ class OneTokenState(StateInterface):
 		gift_ball.current_state = NoTokenState()
 
 	def turn_crank(self, gift_ball: GiftBall) -> None:
-		gift_ball.current_state = BouleSurpriseVendoState()
+		if random.random() < 0.2:  # 20% chance for X2
+			gift_ball.current_state = BouleSurpriseVendoX2State()
+		else:  # 80% chance for regular
+			gift_ball.current_state = BouleSurpriseVendoState()
 
 	def dispense_ball(self, gift_ball: GiftBall) -> None:
 		pass
@@ -71,6 +74,27 @@ class BouleSurpriseVendoState(StateInterface):
 		else:
 			gift_ball.current_state = NoBallesSurpriseState()
 
+class BouleSurpriseVendoX2State(StateInterface):
+	# 2 balls at 1 
+
+	def insert_token(self, gift_ball: GiftBall) -> None:
+		pass
+
+	def eject_token(self, gift_ball: GiftBall) -> None:
+		pass
+
+	def turn_crank(self, gift_ball: GiftBall) -> None:
+		pass
+
+	def dispense_ball(self, gift_ball: GiftBall) -> None:
+		# Dispense 2 balls
+		balls_to_dispense = min(2, gift_ball.surprise_ball_count)
+		gift_ball.surprise_ball_count -= balls_to_dispense
+
+		if gift_ball.surprise_ball_count > 0:
+			gift_ball.current_state = NoTokenState()
+		else:
+			gift_ball.current_state = NoBallesSurpriseState()
 class NoBallesSurpriseState(StateInterface):
 	# No more balls 
 
